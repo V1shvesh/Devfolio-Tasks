@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "eslint-config-airbnb": "^17.1.0",
     "react": "^16.6.1",
     "react-dom": "^16.6.1",
     "react-scripts": "2.1.1"
@@ -15,7 +16,11 @@
   },
   "eslintConfig": {
     "parser": "babel-eslint",
-    "extends": "react-app"
+    "extends": "airbnb",
+    "rules": {
+      "react/jsx-filename-extension": 0,
+      "react/prop-types": 0
+    }
   },
   "browserslist": [
     ">0.2%",
