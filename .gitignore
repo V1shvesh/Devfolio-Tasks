@@ -62,3 +62,6 @@ typings/
 
 #VSCode Configuration
 .vscode/
+
+#FireBase Keys
+task-1/src/firebaseConfig.js
