@@ -1,62 +1,79 @@
 import React, { Component } from 'react';
+import fetch from 'node-fetch';
+
+function toTitleCase(str) {
+  let result = str.replace(
+    /\w\S*/g,
+    txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(),
+  );
+
+  result = result.replace(
+    /-\w\S*/g,
+    txt => `-${txt.charAt(1).toUpperCase()}${txt.substr(2).toLowerCase()}`,
+  );
+
+  result = result.replace(
+    /sql|css|html/gi,
+    txt => txt.toUpperCase(),
+  );
+
+  return result;
+}
 
 class Tag extends Component {
   constructor(props) {
     super(props);
-    const { skill } = this.props;
     this.state = {
-      inputEnabled: true,
       searchListEnabled: false,
       input: '',
-      skill: skill || '',
-      tagList: [
-        'Java',
-        'JavaScript',
-        'Rust',
-        'Python',
-        'C',
-      ],
+      tagList: [],
+      dragged: false,
     };
   }
 
-  handleInput = (event) => {
-    if (event.target.value) {
-      if (event.key === 'Enter') {
-        // console.log(`Skill Entered: ${event.target.value}`);
+  fetchTags = (input) => {
+    fetch(`https://api.stackexchange.com/2.2/tags?pagesize=4&order=desc&sort=popular&site=stackoverflow&inname=${input}&filter=!-.G.68gzI8DP`)
+      .then(response => response.json())
+      .then((json) => {
+        const tagList = json.items.map(item => toTitleCase(item.name));
         this.setState({
-          inputEnabled: false,
-          searchListEnabled: false,
-          skill: event.target.value,
-          input: '',
+          tagList,
         });
+      });
+  }
+
+  handleInput = (e) => {
+    if (e.target.value) {
+      if (e.key === 'Enter') {
+        this.updateSkill(e.target.value);
       } else {
+        const newInput = e.target.value.trim();
         this.setState({
-          searchListEnabled: true,
-          input: event.target.value,
+          input: newInput,
         });
+        this.fetchTags(newInput.toLowerCase());
       }
     } else {
       this.setState({
-        searchListEnabled: false,
         input: '',
+        tagList: [],
       });
     }
   }
 
-  handleFocus = (event) => {
-    if (!event.target.value) {
-      this.setState({
-        searchListEnabled: true,
-      });
-    }
+  handleFocus = () => {
+    this.setState({
+      searchListEnabled: true,
+      input: '',
+    });
   }
 
-  handleBlur = (event) => {
-    if (event.target.value) {
+  handleBlur = (e) => {
+    if (e.target.value) {
+      this.updateSkill(e.target.value);
+    } else {
       this.setState({
-        inputEnabled: false,
         searchListEnabled: false,
-        skill: event.target.value,
       });
     }
   }
@@ -65,9 +82,7 @@ class Tag extends Component {
     const { skillSetter } = this.props;
     skillSetter(skill);
     this.setState({
-      inputEnabled: false,
       searchListEnabled: false,
-      skill,
       input: '',
     });
   }
@@ -76,9 +91,7 @@ class Tag extends Component {
     const { skillRemover } = this.props;
     skillRemover();
     this.setState({
-      inputEnabled: true,
       input: '',
-      skill: '',
     });
   }
 
@@ -101,7 +114,11 @@ class Tag extends Component {
 
     return (
       <li>
-        Type to Search
+        <button
+          type="button"
+        >
+          Type to Search
+        </button>
       </li>
     );
   }
@@ -116,18 +133,38 @@ class Tag extends Component {
       </li>
     ));
 
+  startDrag = (e) => {
+    const { handleDragStart } = this.props;
+    handleDragStart(e);
+    this.setState({
+      dragged: true,
+    });
+  }
+
+  endDrag = (e) => {
+    const { handleDragEnd } = this.props;
+    handleDragEnd(e);
+    this.setState({
+      dragged: false,
+    });
+  }
+
   render() {
     const {
-      inputEnabled,
       searchListEnabled,
-      skill,
       input,
       tagList,
+      dragged,
     } = this.state;
 
-    const { index, disabled } = this.props;
+    const {
+      index,
+      skill,
+      disabled,
+      handleDragEnterItem,
+    } = this.props;
 
-    if (inputEnabled) {
+    if (skill === '') {
       return (
         <div className="tag">
           <div className={`tag__content ${disabled ? 'disabled' : ''}`}>
@@ -135,8 +172,10 @@ class Tag extends Component {
               type="text"
               className="tag__input"
               placeholder={`${index}. Add Skill`}
-              disabled={disabled || !inputEnabled}
+              disabled={disabled}
               onKeyUp={this.handleInput}
+              onFocus={this.handleFocus}
+              onBlur={this.handleBlur}
             />
           </div>
           <div className="tag__searchlist" hidden={!searchListEnabled}>
@@ -149,7 +188,13 @@ class Tag extends Component {
       );
     }
     return (
-      <div className="tag locked">
+      <div
+        className={`tag locked ${dragged ? 'dragged' : ''}`}
+        draggable
+        onDragStart={this.startDrag}
+        onDragEnter={handleDragEnterItem}
+        onDragEnd={this.endDrag}
+      >
         <div>
           {`${index}. ${skill}`}
         </div>

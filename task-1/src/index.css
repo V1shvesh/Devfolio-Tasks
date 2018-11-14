@@ -2,22 +2,96 @@ body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
+  background: #eeeeee;
 }
 
 .app {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 100vw;
-  height: 60vh;
+  height: 100vh;
+}
+
+/* .loading {
+  
+} */
+
+.navbar {
+  display: flex;
+  position: fixed;
+  top: 0;
+  width: 100vw;
+  height: 4em;
+  box-sizing: border-box;
+  padding: 0 20em;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: white;
+  box-shadow: 0 0 4px #999;
+}
+
+.user__profile-img {
+  width: 2.5em;
+  height: 2.5em;
+  border-radius: 50%;
+  margin: 0 0.25em;
+}
+
+.user__name {
+  width: 6em;
+  text-align: center;
+  font-size: 1.5em;
+  font-weight: 200;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+/* Easter Egg :) */
+.button-sign-inout {
+  width: 8em;
+  height: 2em;
+  margin-left: auto;
+  padding: 2px 0;
+  border:none;
+  outline: none;
+  background: #34eacb;
+  font-size: 1.4em;
+  font-weight: 300;
+  border-radius: 2em;
+}
+
+.button-sign-inout.sign-in {
+  margin-right: auto;
+}
+
+.sign-in-prompt {
+  width: 15em;
+  height: 5em;
+  line-height: 5em;
+  text-align: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 2em;
+  font-weight: 900;
+  background-color: #ddd;
+  color: #888;
+  border-radius: 5px;
+  box-shadow: 0 0 4px #999;
 }
 
 .taglist {
   display: grid;
-  grid-auto-rows: 4em;
+  background-color: white;
+  border-radius: 7px;
+  box-shadow: 0 0 4px #999;
+  padding: 3em;
+  grid-template-rows: repeat(5,4em);
+  column-gap: 3em;
+  grid-auto-flow: column;
 }
 
 .tag {
+  grid-column: span 1;
   width: 20em;
   height: 2.5em;
   font-size: 1em;
@@ -42,7 +116,18 @@ body {
   align-items: center;
   background-color: #34eacb;
   padding: 0 20px;
+  cursor: row-resize;
 }
+
+/* .tag.locked.dragged::after {
+  display: block;
+  position: absolute;
+  transform: translateX(-21px);
+  background: white;
+  content: '';
+  width: 20em;
+  height: 5em;
+} */
 
 .tag__input {
   padding: 0;
@@ -69,7 +154,8 @@ body {
 
 .tag__searchlist li {
   margin: 0;
-  padding: 10px 20px;
+  width: 20em;
+  height: 2em;
 }
 
 .tag__searchlist li:hover {
@@ -83,7 +169,7 @@ li > button {
   background: none;
   width: 100%;
   height: 100%;
-  padding: 0;
+  padding-left: 20px;
   font-family: sans-serif;
   font-size: 1em;
   text-align: left;

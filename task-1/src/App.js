@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/database';
 
 import TagList from './components/TagList';
 
@@ -8,8 +10,7 @@ import config from './firebaseConfig';
 
 /*
   TODO:
-    Firebase Auth - UI + Backend
-    Hosting
+    Hide Original Components While Dragging
 */
 
 
@@ -28,7 +29,20 @@ class App extends Component {
 
   getUserName = () => firebase.auth().currentUser.displayName;
 
-  getProfilePicUrl = () => firebase.auth().currentUser.photoURL || '/images/profile_placeholder.png';
+  getProfilePicUrl = () => firebase.auth().currentUser.photoURL || '/images/placeholder.png';
+
+  loadSkills = () => {
+    const { uid } = firebase.auth().currentUser;
+    return firebase.database().ref(`/skills/${uid}`).once('value').then(snap => snap.val());
+  }
+
+  saveSkills= (skills) => {
+    const { uid } = firebase.auth().currentUser;
+    firebase.database().ref(`/skills/${uid}`).set(skills.reduce((acc, cur, index) => {
+      acc[`${index}`] = cur;
+      return acc;
+    }, {}));
+  }
 
   authStateObserver = (user) => {
     const { signedIn } = this.state;
@@ -36,15 +50,11 @@ class App extends Component {
       this.setState({
         signedIn: true,
       });
-    }
-
-    if (!user && signedIn) {
+    } else if (!user && signedIn) {
       this.setState({
         signedIn: false,
       });
-    }
-
-    if (signedIn === undefined) {
+    } else if (signedIn === undefined) {
       this.setState({
         signedIn: false,
       });
@@ -74,27 +84,41 @@ class App extends Component {
     if (signedIn) {
       return (
         <div className="app">
-          <button
-            type="button"
-            className="button-sign-inout"
-            onClick={this.handleSignOut}
+          <div
+            className="navbar"
           >
-            Sign Out
-          </button>
-          <TagList />
+            <img alt="" className="user__profile-img" src={this.getProfilePicUrl()} />
+            <div className="user__name">{this.getUserName()}</div>
+            <button
+              type="button"
+              className="button-sign-inout"
+              onClick={this.handleSignOut}
+            >
+              Sign Out
+            </button>
+          </div>
+          <TagList
+            saveSkills={this.saveSkills}
+            loadSkills={this.loadSkills}
+          />
         </div>
       );
     }
 
     return (
       <div className="app">
-        <button
-          type="button"
-          className="button-sign-inout"
-          onClick={this.handleSignIn}
-        >
-          Sign In
-        </button>
+        <div className="navbar">
+          <button
+            type="button"
+            className="button-sign-inout sign-in"
+            onClick={this.handleSignIn}
+          >
+            Sign In
+          </button>
+        </div>
+        <div className="sign-in-prompt">
+          Sign In to Continue
+        </div>
       </div>
     );
   }
