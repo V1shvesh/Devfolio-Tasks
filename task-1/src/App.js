@@ -76,7 +76,7 @@ class App extends Component {
     if (signedIn === undefined) {
       return (
         <div className="app">
-          <div className="loading">Loading</div>
+          <div className="loading-spinner" />
         </div>
       );
     }
