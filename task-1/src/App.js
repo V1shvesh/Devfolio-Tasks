@@ -5,7 +5,6 @@ import 'firebase/database';
 
 import TagList from './components/TagList';
 
-import './App.css';
 import config from './firebaseConfig';
 
 /*
