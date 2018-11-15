@@ -19,6 +19,13 @@ Done, and done. Although it does populate the list with all tags and not just fr
 
 Firebase is fun :smile:. Never had the opportunity to work with it. Thank You!
 
+### 4. Push Code to Firebase
+
+Completed.
+
+### 5. Host a demo on **surge**
+          
+[Demo Hosted on **surge**](http://devfolio-task-1.surge.sh/)
 
 ## Task II
 
