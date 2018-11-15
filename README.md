@@ -32,3 +32,5 @@ Completed.
 I've tried to keep the text aligned as much as possible, but due to the sub-pixel problem, it may feel awry, especially when you zoom in. Would've preferred an SVG or PNG perhaps, for that pixel-perfect goodness :rainbow: .
 
 Hope I did a good job. :+1:
+
+[View on Surge](http://devfolio-task-2.surge.sh/)
