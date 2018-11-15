@@ -13,7 +13,7 @@ function toTitleCase(str) {
   );
 
   result = result.replace(
-    /sql|css|html/gi,
+    /sql|css|html|ajax/gi,
     txt => txt.toUpperCase(),
   );
 
@@ -31,23 +31,27 @@ class Tag extends Component {
     };
   }
 
-  fetchTags = (input) => {
-    fetch(`https://api.stackexchange.com/2.2/tags?pagesize=4&order=desc&sort=popular&site=stackoverflow&inname=${input}&filter=!-.G.68gzI8DP`)
+  fetchTags = (query) => {
+    fetch(`https://api.stackexchange.com/2.2/tags?pagesize=4&order=desc&sort=popular&site=stackoverflow&inname=${query}&filter=!-.G.68gzI8DP`)
       .then(response => response.json())
       .then((json) => {
+        const { input } = this.state;
         const tagList = json.items.map(item => toTitleCase(item.name));
-        this.setState({
-          tagList,
-        });
+        // A little hack to beat the concurrency issue of tagList updating even after input is empty
+        if (input) {
+          this.setState({
+            tagList,
+          });
+        }
       });
   }
 
   handleInput = (e) => {
-    if (e.target.value) {
+    const newInput = e.target.value.trim();
+    if (newInput) {
       if (e.key === 'Enter') {
-        this.updateSkill(e.target.value);
+        this.updateSkill(newInput);
       } else {
-        const newInput = e.target.value.trim();
         this.setState({
           input: newInput,
         });
